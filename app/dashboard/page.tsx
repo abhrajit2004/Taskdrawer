@@ -18,7 +18,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger, DialogDescription, DialogFooter
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
@@ -50,6 +50,8 @@ export default function Dashboard() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProject, setSelectedProject] = useState<string | "all">("all");
   const [userId, setUserId] = useState<string | null>(null);
+  const [addopen, setAddOpen] = useState(false);
+
 
 
   useEffect(() => {
@@ -58,7 +60,7 @@ export default function Dashboard() {
       setUserId(storedUserId);
     }
   }, []);
-  
+
   const { data } = useQuery({
     queryKey: ['taskData', userId],
     queryFn: async () => {
@@ -74,7 +76,7 @@ export default function Dashboard() {
       return await response.json()
     },
     enabled: !!userId,
-  
+
   })
 
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -96,13 +98,13 @@ export default function Dashboard() {
   }, [data]);
 
   useEffect(() => {
-    if(!userId){
+    if (!userId) {
       console.log("User ID is null")
       return;
     }
     setNewTask((prev) => ({ ...prev, userId }));
   }, [userId])
-  
+
 
   const getPriorityColor = (priority: Priority) => {
     switch (priority) {
@@ -126,10 +128,12 @@ export default function Dashboard() {
       body: JSON.stringify(newTask),
     })
 
+
     const data = await response.json()
 
     setTasks([...tasks, data[0]])
 
+    setAddOpen(false);
 
   }
 
@@ -162,9 +166,9 @@ export default function Dashboard() {
     const data = await response.json()
 
     if (data) {
-      console.log(data)
       setTasks((prevTasks) => prevTasks.map(t => id === t.id ? { ...t, ...task } : t))
     }
+
 
   }
 
@@ -228,7 +232,7 @@ export default function Dashboard() {
       },
     }).then(response => response.json())
       .then(data => {
-        if(data){
+        if (data) {
           setProjects(data.projects);
         }
       })
@@ -238,7 +242,7 @@ export default function Dashboard() {
   return (
     <>
       <Navigation />
-      <div className="container mx-auto py-10 px-40">
+      <div className="container mx-auto py-10 px-4 md:px-40">
         <div className="grid gap-6">
           {/* Statistics Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -304,7 +308,7 @@ export default function Dashboard() {
               </SelectContent>
             </Select>
             <Select
-            value={selectedProject} onValueChange={(value) => setSelectedProject(value as string)}
+              value={selectedProject} onValueChange={(value) => setSelectedProject(value as string)}
             >
               <SelectTrigger className="w-[180px]">
                 <Filter className="mr-2 h-4 w-4" />
@@ -317,7 +321,7 @@ export default function Dashboard() {
                 ))}
               </SelectContent>
             </Select>
-            <Dialog>
+            <Dialog open={addopen} onOpenChange={setAddOpen}>
               <DialogTrigger asChild>
                 <Button>
                   <Plus className="mr-2 h-4 w-4" />
@@ -443,14 +447,14 @@ export default function Dashboard() {
                       </div>
                     </div>
                   </div>
-                  <div className="">
-                    <Dialog >
+                  <div className="flex items-center gap-2 justify-end flex-wrap">
+                    {/* Edit Button */}
+                    <Dialog>
                       <DialogTrigger asChild>
                         <Button
-                          variant="ghost"
+                          variant="destructive"
                           size="icon"
-
-                          className="text-blue-500"
+                          className="p-2 rounded-md hover:bg-red-600 transition-all"
                         >
                           <Pencil className="h-4 w-4" />
                         </Button>
@@ -469,9 +473,7 @@ export default function Dashboard() {
                               onChange={(e) => {
                                 const updatedTask = { ...task, title: e.target.value };
                                 setTasks((prevTasks) =>
-                                  prevTasks.map((t) =>
-                                    t.id === task.id ? updatedTask : t
-                                  )
+                                  prevTasks.map((t) => (t.id === task.id ? updatedTask : t))
                                 );
                               }}
                             />
@@ -484,25 +486,21 @@ export default function Dashboard() {
                               onChange={(e) => {
                                 const updatedTask = { ...task, description: e.target.value };
                                 setTasks((prevTasks) =>
-                                  prevTasks.map((t) =>
-                                    t.id === task.id ? updatedTask : t
-                                  )
+                                  prevTasks.map((t) => (t.id === task.id ? updatedTask : t))
                                 );
                               }}
                             />
                           </div>
                           <div className="grid gap-2">
                             <Label htmlFor="edit-priority">Priority</Label>
-                            <Select value={task.priority} onValueChange={(e) => {
-                              const updatedTask = { ...task, priority: e as Priority };
-                              setTasks((prevTasks) =>
-                                prevTasks.map((t) =>
-                                  t.id === task.id ? updatedTask : t
-                                )
-                              );
-
-                            }
-                            }
+                            <Select
+                              value={task.priority}
+                              onValueChange={(e) => {
+                                const updatedTask = { ...task, priority: e as Priority };
+                                setTasks((prevTasks) =>
+                                  prevTasks.map((t) => (t.id === task.id ? updatedTask : t))
+                                );
+                              }}
                             >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select priority" />
@@ -531,15 +529,16 @@ export default function Dashboard() {
                               <PopoverContent className="w-auto p-0">
                                 <Calendar
                                   mode="single"
-                                  selected={newTask.dueDate ? parseISO(newTask.dueDate) : undefined}
+                                  selected={
+                                    newTask.dueDate ? parseISO(newTask.dueDate) : undefined
+                                  }
                                   onSelect={(date) => {
                                     const updatedTask = {
-                                      ...task, dueDate: date ? format(date, "yyyy-MM-dd") : "",
+                                      ...task,
+                                      dueDate: date ? format(date, "yyyy-MM-dd") : "",
                                     };
                                     setTasks((prevTasks) =>
-                                      prevTasks.map((t) =>
-                                        t.id === task.id ? updatedTask : t
-                                      )
+                                      prevTasks.map((t) => (t.id === task.id ? updatedTask : t))
                                     );
                                   }}
                                   initialFocus
@@ -549,44 +548,77 @@ export default function Dashboard() {
                           </div>
                           <div className="grid gap-2">
                             <Label htmlFor="edit-project">Project Name</Label>
-                            <Input value={task.projectName} onChange={(e) => {
-                              const updatedTask = { ...task, projectName: e.target.value };
-                              setTasks((prevTasks) =>
-                                prevTasks.map((t) =>
-                                  t.id === task.id ? updatedTask : t
-                                )
-                              );
-                            }}></Input>
+                            <Input
+                              value={task.projectName}
+                              onChange={(e) => {
+                                const updatedTask = { ...task, projectName: e.target.value };
+                                setTasks((prevTasks) =>
+                                  prevTasks.map((t) => (t.id === task.id ? updatedTask : t))
+                                );
+                              }}
+                            />
                           </div>
                         </div>
 
                         <div className="flex justify-end">
-                          <Button onClick={() => updateTask(task.id, task)}>Save Changes</Button>
+                          <Button onClick={() => updateTask(task.id, task)}>
+                            Save Changes
+                          </Button>
                         </div>
                       </DialogContent>
                     </Dialog>
+
+  
+                    {/* Delete Button with Confirmation Dialog */}
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="destructive"
+                          size="icon"
+                          className="p-2 rounded-md hover:bg-red-600 transition-all"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="h-4 w-4"
+                          >
+                            <path d="M3 6h18" />
+                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                          </svg>
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Confirm Delete</DialogTitle>
+                          <DialogDescription>
+                            Are you sure you want to delete this task? This action cannot be undone.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter className="flex justify-end gap-2">
+                          <Button variant="outline">
+                            Cancel
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            onClick={() => {
+                              deleteTask(task.id);
+                            }}
+                          >
+                            Yes, Delete
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+
                   </div>
-                  <Button
-                    onClick={() => deleteTask(task.id)}
-                    className="text-destructive"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="h-4 w-4"
-                    >
-                      <path d="M3 6h18" />
-                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-                    </svg>
-                  </Button>
                 </div>
               </Card>
 

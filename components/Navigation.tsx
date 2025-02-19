@@ -5,25 +5,49 @@ import { Globe } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { useRouter } from "next/navigation";
 import { DropdownMenuDemo } from "./Userdropdown";
+import { useRef, useEffect } from "react";
+
 
 export default function Navigation() {
 
   const router = useRouter();
+  const logoutRef = useRef<HTMLButtonElement>(null);
+  const getStartedRef = useRef<HTMLButtonElement>(null);
+
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
     localStorage.removeItem("username");
+    router.push('/')
   }
 
   const handleGetStarted = () => {
-    if(localStorage.getItem("token")) {
+    if (localStorage.getItem("token")) {
       router.push('/dashboard')
     }
-    else{
+    else {
       router.push('/login')
     }
   }
+
+  useEffect(() => {
+    if (!localStorage.getItem("token")) {
+      if (logoutRef.current) {
+        (logoutRef.current as HTMLButtonElement).style.display="none";
+      }
+    }
+
+    if(localStorage.getItem("token")) {
+      if (getStartedRef.current) {
+        (getStartedRef.current as HTMLButtonElement).style.display="none";
+      }
+    }
+
+    
+  }, [logoutRef, getStartedRef])
+
+
 
   return (
     <header className="border-b sticky top-0 bg-background/80 backdrop-blur-sm">
@@ -40,15 +64,16 @@ export default function Navigation() {
             Pricing
           </Link>
           <ThemeToggle />
-          <DropdownMenuDemo /> 
-         
-          <Button onClick={()=>handleLogout()}>
+          <DropdownMenuDemo />
+
+
+          <Button ref={logoutRef} onClick={() => handleLogout()}>
             Log out
-          </Button> :
-          <Button onClick={()=>handleGetStarted()}>
-          Get Started
-        </Button>
-        
+          </Button>
+          <Button ref={getStartedRef} onClick={() => handleGetStarted()}>
+            Get Started
+          </Button>
+
 
         </nav>
       </div>
