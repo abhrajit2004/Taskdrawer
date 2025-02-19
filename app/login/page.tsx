@@ -1,3 +1,5 @@
+"use client";
+
 import { GalleryVerticalEnd } from "lucide-react"
 import { LoginForm } from "@/components/Login"
 import Link from "next/link"

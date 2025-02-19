@@ -40,7 +40,6 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { Task, Priority, Project } from "../types/tasks";
-import { useRouter } from "next/navigation";
 import Navigation from "@/components/Navigation";
 
 
@@ -49,19 +48,21 @@ export default function Dashboard() {
   const [searchquery, setSearchquery] = useState('');
   const [filterPriority, setFilterPriority] = useState<Priority | "all">("all");
   const [projects, setProjects] = useState<Project[]>([]);
-  const router = useRouter();
   const [selectedProject, setSelectedProject] = useState<string | "all">("all");
-
-  const userId = localStorage.getItem("userId");
-
+  const [userId, setUserId] = useState<string | null>(null);
 
 
+  useEffect(() => {
+    const storedUserId = localStorage.getItem("userId");
+    if (storedUserId) {
+      setUserId(storedUserId);
+    }
+  }, []);
+  
   const { data } = useQuery({
     queryKey: ['taskData', userId],
     queryFn: async () => {
-      if (!userId) {
-        throw new Error("User ID is null");
-      }
+      if (!userId) return []; // Prevents fetching when userId is null
       const response = await fetch(`/api/tasks?userId=${encodeURIComponent(userId)}`,
         {
           method: 'GET',
@@ -72,6 +73,7 @@ export default function Dashboard() {
       )
       return await response.json()
     },
+    enabled: !!userId,
   
   })
 
@@ -82,24 +84,25 @@ export default function Dashboard() {
     priority: "high",
     dueDate: "",
     projectName: "",
-    userId: localStorage.getItem('userId'),
+    userId: "",
   } as Task);
 
 
   useEffect(() => {
-    if (!localStorage.getItem('token')) {
-      router.push('/')
-    }
-    else {
-      router.push('/dashboard')
-    }
-
-    console.log('userId', localStorage.getItem('userId'))
 
     if (data) {
       setTasks(data.tasks);
     }
-  }, [data, router]);
+  }, [data]);
+
+  useEffect(() => {
+    if(!userId){
+      console.log("User ID is null")
+      return;
+    }
+    setNewTask((prev) => ({ ...prev, userId }));
+  }, [userId])
+  
 
   const getPriorityColor = (priority: Priority) => {
     switch (priority) {
@@ -229,7 +232,7 @@ export default function Dashboard() {
           setProjects(data.projects);
         }
       })
-  }, [projects, userId])
+  }, [userId])
 
 
   return (

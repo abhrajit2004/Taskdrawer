@@ -1,3 +1,4 @@
+"use client";
 
 import { Button } from "@/components/ui/button"
 import {
@@ -6,9 +7,20 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useState, useEffect } from "react";
 
 
 export function DropdownMenuDemo() {
+
+    const [username, setUsername] = useState("");
+
+    useEffect(() => {
+      if(localStorage.getItem("username")) {
+       const username = JSON.stringify(localStorage.getItem("username"));
+       setUsername(username);
+      }
+    }, [])
+    
 
 
     return (
@@ -17,7 +29,7 @@ export function DropdownMenuDemo() {
                 <Button variant="outline">Profile</Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
-                <DropdownMenuLabel>Hello {localStorage.getItem("username") && localStorage.getItem("username")}</DropdownMenuLabel>
+                <DropdownMenuLabel>Hello {username}</DropdownMenuLabel>
             </DropdownMenuContent>
         </DropdownMenu>
     )

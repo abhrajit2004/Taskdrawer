@@ -14,7 +14,15 @@ export default function Navigation() {
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
     localStorage.removeItem("username");
-    router.push('/login')
+  }
+
+  const handleGetStarted = () => {
+    if(localStorage.getItem("token")) {
+      router.push('/dashboard')
+    }
+    else{
+      router.push('/login')
+    }
   }
 
   return (
@@ -32,15 +40,15 @@ export default function Navigation() {
             Pricing
           </Link>
           <ThemeToggle />
-          {localStorage.getItem("username") && <DropdownMenuDemo /> }
-          {localStorage.getItem("token") ? 
+          <DropdownMenuDemo /> 
+         
           <Button onClick={()=>handleLogout()}>
             Log out
           </Button> :
-          <Button onClick={()=>router.push('/login')}>
+          <Button onClick={()=>handleGetStarted()}>
           Get Started
         </Button>
-        }
+        
 
         </nav>
       </div>
