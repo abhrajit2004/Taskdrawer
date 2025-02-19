@@ -236,7 +236,7 @@ export default function Dashboard() {
           setProjects(data.projects);
         }
       })
-  }, [userId])
+  }, [userId, projects])
 
 
   return (
