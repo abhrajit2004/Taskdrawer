@@ -35,6 +35,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ message: "User registered successfully", token, id:newUser[0].id.toString(), username:newUser[0].name }, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ error: "Server Error" }, { status: 500 });
+    return NextResponse.json({ error: error }, { status: 500 });
   }
 }

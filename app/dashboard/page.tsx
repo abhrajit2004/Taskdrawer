@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { format, parseISO, isValid } from "date-fns";
+import { format, parseISO } from "date-fns";
 import {
   CalendarIcon,
   Plus,
@@ -11,7 +11,6 @@ import {
   AlertCircle,
   Filter,
   Pencil,
-  Router
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -57,7 +56,7 @@ export default function Dashboard() {
 
 
 
-  const { isPending, error, data, isFetching } = useQuery({
+  const { data } = useQuery({
     queryKey: ['taskData', userId],
     queryFn: async () => {
       if (!userId) {
@@ -100,7 +99,7 @@ export default function Dashboard() {
     if (data) {
       setTasks(data.tasks);
     }
-  }, [data]);
+  }, [data, router]);
 
   const getPriorityColor = (priority: Priority) => {
     switch (priority) {
@@ -230,7 +229,7 @@ export default function Dashboard() {
           setProjects(data.projects);
         }
       })
-  }, [projects])
+  }, [projects, userId])
 
 
   return (

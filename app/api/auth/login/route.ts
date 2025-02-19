@@ -31,6 +31,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ token, id:user[0].id.toString(), username: user[0].name }, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ error: "Server Error" }, { status: 500 });
+    return NextResponse.json({ error: error }, { status: 500 });
   }
 }

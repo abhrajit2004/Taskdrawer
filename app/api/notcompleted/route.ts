@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { tasksTable } from '@/db/schema';
 import { eq } from 'drizzle-orm';
-import { projectsTable } from '@/db/schema';
 
 export async function POST(request: Request) {
     try {
@@ -18,6 +17,6 @@ export async function POST(request: Request) {
         return NextResponse.json({ success: true, completed: notCompleted });
 
     } catch (error) {
-        return NextResponse.json({ success: false, error: "Error completing tasks!" }, { status: 500 });
+        return NextResponse.json({ success: false, error: error }, { status: 500 });
     }
 }

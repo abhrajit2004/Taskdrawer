@@ -16,7 +16,7 @@ export async function GET(request: Request) {
         return NextResponse.json({ success: true, tasks: tasks });
     }
     catch (e) {
-        return NextResponse.json({ success: false, error: "Error fetching tasks!" }, { status: 500 });
+        return NextResponse.json({ success: false, error: e }, { status: 500 });
     }
 }
 
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
         return NextResponse.json(newTask, { status: 201 });
     }
     catch (e) {
-        return NextResponse.json({ error: "Error creating task!" }, { status: 500 });
+        return NextResponse.json({ error: e }, { status: 500 });
     }
 }
 
@@ -54,7 +54,7 @@ export async function PUT(request: Request) {
         return NextResponse.json(updatedTask);
     }
     catch (e) {
-        return NextResponse.json({ error: "Error updating task!" }, { status: 500 });
+        return NextResponse.json({ error: e }, { status: 500 });
     }
 }
 
@@ -74,6 +74,6 @@ export async function DELETE(request: Request) {
         return NextResponse.json({ success: true, data: deletedTask });
     }
     catch (e) {
-        return NextResponse.json({ error: "Error deleting task!" }, { status: 500 });
+        return NextResponse.json({ error: e }, { status: 500 });
     }
 }

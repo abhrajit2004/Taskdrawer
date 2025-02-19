@@ -29,7 +29,7 @@ export function LoginForm({
     setFormData({ ...formData, [e.target.name]: e.target.value });
   }
 
-  const signupUser = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const signupUser = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const res = await fetch("/api/auth/signup", {
       method: "POST",
@@ -50,7 +50,7 @@ export function LoginForm({
     }
   };
 
-  const loginUser = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const loginUser = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const res = await fetch("/api/auth/login", {
       method: "POST",
@@ -108,11 +108,11 @@ export function LoginForm({
 
       </form>
       {!loginState ?
-            <Button onClick={(e: any) => signupUser(e)} type="submit" className="w-full my-6">
+            <Button onClick={(e: React.MouseEvent<HTMLButtonElement>) => signupUser(e)} type="submit" className="w-full my-6">
               Sign up
             </Button>
             :
-            <Button onClick={(e: any) => loginUser(e)} type="submit" className="w-full my-6">
+            <Button onClick={(e: React.MouseEvent<HTMLButtonElement>) => loginUser(e)} type="submit" className="w-full my-6">
               Login
             </Button>
           }
