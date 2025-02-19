@@ -21,7 +21,7 @@ export default function Hero() {
     <section className="py-20 bg-gradient-to-b from-background to-muted">
       <div className="container mx-auto px-4 text-center">
         <h1 className="text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-violet-600 dark:from-blue-400 dark:to-violet-400">
-          Transform Your Workflow
+          Transform Your Workflow with Taskdrawer
         </h1>
         <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
           Streamline your process, boost productivity, and achieve more with our comprehensive solution.

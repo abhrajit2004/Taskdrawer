@@ -2,10 +2,10 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Globe } from "lucide-react"
-import { ThemeToggle } from "@/components/theme-toggle"
 import { useRouter } from "next/navigation";
 import { DropdownMenuDemo } from "./Userdropdown";
 import { useRef, useEffect } from "react";
+import { ThemeToggle } from "./theme-toggle";
 
 
 export default function Navigation() {
@@ -64,6 +64,7 @@ export default function Navigation() {
             Pricing
           </Link>
           <ThemeToggle />
+
           <DropdownMenuDemo />
 
 
